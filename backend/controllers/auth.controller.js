@@ -30,7 +30,7 @@ const signup = async (req, res) => {
         });
 
         if (user) {
-            const verificationUrl = `${process.env.BACKEND_URL || 'https://noteslyra.onrender.com'}/api/auth/verify/${verificationToken}`;
+            const verificationUrl = `${process.env.BACKEND_URL || 'https://nursing-vidya.onrender.com'}/api/auth/verify/${verificationToken}`;
             await sendVerificationEmail(user.email, verificationUrl);
 
             res.status(201).json({
