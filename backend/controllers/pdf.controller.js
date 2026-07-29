@@ -5,9 +5,9 @@ const Order = require('../models/Order');
 const ImageKit = require("imagekit");
 
 const imagekit = new ImageKit({
-    publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
-    privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
-    urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT
+    publicKey: process.env.IMAGE_KIT_PUBLIC_KEY,
+    privateKey: process.env.IMAGE_KIT_PRIVATE_KEY,
+    urlEndpoint: process.env.IMAGE_KIT_URL_ENDPOINT
 });
 
 // @desc    Get all PDFs (Public info)
