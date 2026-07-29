@@ -73,7 +73,8 @@ const downloadPdf = async (req, res) => {
             }
         }
 
-        const filePath = path.join(__dirname, '../', pdf.filePath);
+        const fileName = path.basename(pdf.filePath.replace(/\\/g, '/'));
+        const filePath = path.join(__dirname, '../uploads/pdfs', fileName);
         if (fs.existsSync(filePath)) {
             res.download(filePath);
         } else {
@@ -91,8 +92,10 @@ const deletePdf = async (req, res) => {
     try {
         const pdf = await PDF.findById(req.params.id);
         if (pdf) {
-            if (fs.existsSync(pdf.filePath)) {
-                fs.unlinkSync(pdf.filePath);
+            const fileName = path.basename(pdf.filePath.replace(/\\/g, '/'));
+            const filePath = path.join(__dirname, '../uploads/pdfs', fileName);
+            if (fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath);
             }
             await pdf.deleteOne();
             res.json({ message: 'PDF removed' });

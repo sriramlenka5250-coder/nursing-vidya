@@ -36,7 +36,22 @@ const UserDashboard = () => {
             link.click();
             link.parentNode.removeChild(link);
         } catch (error) {
-            alert('Error downloading file');
+            console.error('Download error:', error);
+            if (error.response && error.response.data instanceof Blob) {
+                // Parse blob to get the JSON error message from backend
+                error.response.data.text().then(text => {
+                    try {
+                        const errData = JSON.parse(text);
+                        alert(`Error: ${errData.message}`);
+                    } catch (e) {
+                        alert('Error downloading file');
+                    }
+                });
+            } else if (error.response && error.response.data && error.response.data.message) {
+                alert(`Error: ${error.response.data.message}`);
+            } else {
+                alert('Error downloading file');
+            }
         }
     };
 
