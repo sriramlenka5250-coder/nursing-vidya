@@ -5,15 +5,8 @@ const path = require('path');
 const { protect, admin } = require('../middleware/authMiddleware');
 const { getPdfs, uploadPdf, downloadPdf, deletePdf } = require('../controllers/pdf.controller');
 
-// Multer Storage for PDFs
-const storage = multer.diskStorage({
-    destination(req, file, cb) {
-        cb(null, 'uploads/pdfs/');
-    },
-    filename(req, file, cb) {
-        cb(null, `${Date.now()}_${file.originalname}`);
-    },
-});
+// Multer Storage for PDFs (Memory Storage for ImageKit upload)
+const storage = multer.memoryStorage();
 
 const upload = multer({
     storage,

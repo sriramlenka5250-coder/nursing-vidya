@@ -6,6 +6,7 @@ const pdfSchema = new mongoose.Schema({
     price: { type: Number, required: true },
     isFree: { type: Boolean, default: false },
     filePath: { type: String, required: true },
+    fileId: { type: String }, // For ImageKit
     category: { type: String },
     semester: { type: String },
 }, { timestamps: true });

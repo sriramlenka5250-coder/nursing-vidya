@@ -2,6 +2,13 @@ const path = require('path');
 const fs = require('fs');
 const PDF = require('../models/PDF');
 const Order = require('../models/Order');
+const ImageKit = require("imagekit");
+
+const imagekit = new ImageKit({
+    publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
+    privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
+    urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT
+});
 
 // @desc    Get all PDFs (Public info)
 // @route   GET /api/pdfs
@@ -33,12 +40,23 @@ const uploadPdf = async (req, res) => {
     try {
         const { title, description, price, isFree, category, semester } = req.body;
 
+        if (!req.file) {
+            return res.status(400).json({ message: 'No PDF file provided' });
+        }
+
+        const uploadResponse = await imagekit.upload({
+            file: req.file.buffer, // memory buffer
+            fileName: `${Date.now()}_${req.file.originalname}`,
+            folder: "/pdfs"
+        });
+
         const pdf = new PDF({
             title,
             description,
             price: Number(price),
             isFree: isFree === 'true' || isFree === true,
-            filePath: req.file.path,
+            filePath: uploadResponse.url,
+            fileId: uploadResponse.fileId,
             category,
             semester
         });
@@ -73,12 +91,27 @@ const downloadPdf = async (req, res) => {
             }
         }
 
+        // If it's a cloud URL (ImageKit), fetch it and stream to client
+        if (pdf.filePath.startsWith('http')) {
+            const https = require('https');
+            
+            res.setHeader('Content-Disposition', `attachment; filename="${pdf.title}.pdf"`);
+            res.setHeader('Content-Type', 'application/pdf');
+            
+            https.get(pdf.filePath, (stream) => {
+                stream.pipe(res);
+            }).on('error', (err) => {
+                res.status(500).json({ message: 'Error downloading file from cloud' });
+            });
+            return;
+        }
+
         const fileName = path.basename(pdf.filePath.replace(/\\/g, '/'));
-        const filePath = path.join(__dirname, '../uploads/pdfs', fileName);
-        if (fs.existsSync(filePath)) {
-            res.download(filePath);
+        const localFilePath = path.join(__dirname, '../uploads/pdfs', fileName);
+        if (fs.existsSync(localFilePath)) {
+            res.download(localFilePath);
         } else {
-            console.error(`File not found: DB path was ${pdf.filePath}, constructed path was ${filePath}`);
+            console.error(`File not found: DB path was ${pdf.filePath}, constructed path was ${localFilePath}`);
             res.status(404).json({ message: 'File not found on server' });
         }
     } catch (error) {
@@ -93,10 +126,16 @@ const deletePdf = async (req, res) => {
     try {
         const pdf = await PDF.findById(req.params.id);
         if (pdf) {
-            const fileName = path.basename(pdf.filePath.replace(/\\/g, '/'));
-            const filePath = path.join(__dirname, '../uploads/pdfs', fileName);
-            if (fs.existsSync(filePath)) {
-                fs.unlinkSync(filePath);
+            if (pdf.fileId) {
+                // Delete from ImageKit
+                await imagekit.deleteFile(pdf.fileId);
+            } else if (!pdf.filePath.startsWith('http')) {
+                // Delete local file
+                const fileName = path.basename(pdf.filePath.replace(/\\/g, '/'));
+                const localFilePath = path.join(__dirname, '../uploads/pdfs', fileName);
+                if (fs.existsSync(localFilePath)) {
+                    fs.unlinkSync(localFilePath);
+                }
             }
             await pdf.deleteOne();
             res.json({ message: 'PDF removed' });
