@@ -159,7 +159,7 @@ const verifyEmail = async (req, res) => {
         const user = await User.findOne({ verificationToken: req.params.token });
 
         if (!user) {
-            const frontendUrl = process.env.FRONTEND_URL || 'https://www.nursingvidya.shop';
+            const frontendUrl = 'https://www.nursingvidya.shop';
             return res.redirect(`${frontendUrl}/login?error=invalid_token`);
         }
 
@@ -167,7 +167,7 @@ const verifyEmail = async (req, res) => {
         user.verificationToken = undefined;
         await user.save();
 
-        const frontendUrl = process.env.FRONTEND_URL || 'https://www.nursingvidya.shop';
+        const frontendUrl = 'https://www.nursingvidya.shop';
         res.redirect(`${frontendUrl}/login?verified=true`);
     } catch (error) {
         res.status(500).json({ message: error.message });
