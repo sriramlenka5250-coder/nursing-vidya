@@ -30,7 +30,7 @@ const signup = async (req, res) => {
         });
 
         if (user) {
-            const verificationUrl = `${process.env.BACKEND_URL || 'https://nursing-vidya.onrender.com'}/api/auth/verify/${verificationToken}`;
+            const verificationUrl = `${process.env.BACKEND_URL || 'https://api.nursingvidya.shop'}/api/auth/verify/${verificationToken}`;
             await sendVerificationEmail(user.email, verificationUrl);
 
             res.status(201).json({
@@ -159,7 +159,7 @@ const verifyEmail = async (req, res) => {
         const user = await User.findOne({ verificationToken: req.params.token });
 
         if (!user) {
-            const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+            const frontendUrl = process.env.FRONTEND_URL || 'https://www.nursingvidya.shop';
             return res.redirect(`${frontendUrl}/login?error=invalid_token`);
         }
 
@@ -167,7 +167,7 @@ const verifyEmail = async (req, res) => {
         user.verificationToken = undefined;
         await user.save();
 
-        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+        const frontendUrl = process.env.FRONTEND_URL || 'https://www.nursingvidya.shop';
         res.redirect(`${frontendUrl}/login?verified=true`);
     } catch (error) {
         res.status(500).json({ message: error.message });

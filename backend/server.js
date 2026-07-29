@@ -11,7 +11,7 @@ const app = express();
 
 // Middleware
 app.use(cors({
-    origin: ['http://localhost:5173', 'https://nursing-vidya.vercel.app'],
+    origin: ['http://localhost:5173', 'https://nursing-vidya.vercel.app', 'https://www.nursingvidya.shop', 'https://nursingvidya.shop'],
     credentials: true
 }));
 app.use(express.json());
