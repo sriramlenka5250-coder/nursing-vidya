@@ -61,34 +61,34 @@ const UserDashboard = () => {
                     ) : (
                         <ul className="divide-y divide-slate-200 dark:divide-slate-800">
                             {orders.map((order) => (
-                                <li key={order._id} className="p-6 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center space-x-4">
-                                            <div className="h-12 w-12 bg-indigo-100 rounded-lg flex items-center justify-center text-indigo-600 text-xl">
+                                <li key={order._id} className="p-4 sm:p-6 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                        <div className="flex items-center space-x-3 sm:space-x-4">
+                                            <div className="h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0 bg-indigo-100 rounded-lg flex items-center justify-center text-indigo-600 text-lg sm:text-xl">
                                                 📝
                                             </div>
-                                            <div>
-                                                <p className="text-lg font-bold text-slate-900 dark:text-slate-50">{order.pdfId?.title || 'Unknown Note'}</p>
-                                                <div className="flex items-center text-xs text-slate-500 dark:text-slate-400 mt-1">
-                                                    <span className="mr-2">Date: {new Date(order.createdAt).toLocaleDateString()}</span>
-                                                    <span>•</span>
-                                                    <span className="ml-2">ID: #{order._id.slice(-6).toUpperCase()}</span>
+                                            <div className="min-w-0">
+                                                <p className="text-base sm:text-lg font-bold text-slate-900 dark:text-slate-50 truncate">{order.pdfId?.title || 'Unknown Note'}</p>
+                                                <div className="flex flex-wrap items-center text-xs text-slate-500 dark:text-slate-400 mt-1 gap-1 sm:gap-2">
+                                                    <span>Date: {new Date(order.createdAt).toLocaleDateString()}</span>
+                                                    <span className="hidden sm:inline">•</span>
+                                                    <span>ID: #{order._id.slice(-6).toUpperCase()}</span>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div className="flex items-center space-x-4">
+                                        <div className="flex flex-row sm:flex-row items-center justify-between sm:justify-end gap-3 w-full sm:w-auto mt-2 sm:mt-0">
                                             {order.status === 'approved' ? (
-                                                <span className="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800 border border-green-200 flex items-center">
+                                                <span className="px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800 border border-green-200 flex items-center whitespace-nowrap">
                                                     <span className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1.5"></span>
                                                     Ready
                                                 </span>
                                             ) : order.status === 'pending' ? (
-                                                <span className="px-3 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800 border border-yellow-200">
+                                                <span className="px-3 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800 border border-yellow-200 whitespace-nowrap">
                                                     Pending Approval
                                                 </span>
                                             ) : (
-                                                <span className="px-3 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800 border border-red-200">
+                                                <span className="px-3 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800 border border-red-200 whitespace-nowrap">
                                                     Rejected
                                                 </span>
                                             )}
@@ -96,8 +96,9 @@ const UserDashboard = () => {
                                             {order.status === 'approved' && order.pdfId && (
                                                 <button
                                                     onClick={() => downloadHandler(order.pdfId._id, order.pdfId.title)}
-                                                    className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 hover:border-primary-200 dark:hover:border-primary-800 px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm"
+                                                    className="w-full sm:w-auto bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 hover:border-primary-200 dark:hover:border-primary-800 px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm flex items-center justify-center whitespace-nowrap"
                                                 >
+                                                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                                                     Download PDF
                                                 </button>
                                             )}
