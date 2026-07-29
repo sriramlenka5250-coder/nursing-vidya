@@ -78,6 +78,7 @@ const downloadPdf = async (req, res) => {
         if (fs.existsSync(filePath)) {
             res.download(filePath);
         } else {
+            console.error(`File not found: DB path was ${pdf.filePath}, constructed path was ${filePath}`);
             res.status(404).json({ message: 'File not found on server' });
         }
     } catch (error) {
